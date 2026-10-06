@@ -152,7 +152,107 @@ The portable/core implementation also supports:
 - file sizes
 - directory/file sorting
 
-The full controller-driven native file-manager screen is **not yet complete**.
+The native Xbox 360 build now also includes a controller-driven file-manager screen with directory navigation, copy, move, delete and folder creation.
+
+## Native search, state and filters
+
+- On-screen Xbox keyboard search through `XShowKeyboardUI`
+- persistent favorites in `Hdd1:\SeriesDash360\userdata\state.ini`
+- persistent recently-played timestamps
+- recent list sorted by last launch
+- native filters for:
+  - All
+  - Games
+  - Homebrew
+  - Emulators
+  - Apps
+  - Favorites
+  - Recent
+- custom title/category metadata overrides
+
+## Native file manager
+
+- controller-driven file browser
+- HDD/USB path navigation
+- enter folder / go up
+- recursive copy
+- move
+- recursive delete
+- create folder
+- file-size display
+- copy/move destination entry through the Xbox keyboard
+
+## Themes / skins
+
+- built-in Series Dark theme
+- Xbox Green
+- Series Blue
+- OLED
+- external `.theme` files from `Hdd1:\SeriesDash360\themes`
+- configurable background/panel/accent/text/muted colors
+- optional background-image path
+
+## Local Title Update manager
+
+- scans installed local title-update locations
+- per-title update listing
+- enable/disable through local file state
+- rescan from the dashboard
+
+This manager handles updates already present on storage. It is not a piracy-oriented update downloader.
+
+## Achievements and saves
+
+- read-only achievement enumeration for the signed-in profile/title
+- achievement label, Gamerscore and unlocked state
+- read-only save-game discovery by profile and Title ID
+- save filename/path/size display
+
+## Screenshots
+
+- native framebuffer/back-buffer capture
+- PNG output
+- stored in `Hdd1:\SeriesDash360\screenshots`
+- timestamped screenshot filenames
+- controller shortcut through right-stick click
+
+## Native plugins and scripts
+
+- scans `Hdd1:\SeriesDash360\plugins\*.xex`
+- loads selected plugin modules through `XexLoadImage`
+- scans `Hdd1:\SeriesDash360\scripts\*.sd360`
+- startup script execution
+- script commands for scan, theme, favorite, cover, launch, category and title overrides
+
+## System-Link LAN integration
+
+- UDP LAN peer discovery on port `30720`
+- periodic dashboard beacons
+- peer IP/name tracking
+- active Title ID advertisement
+- stale-peer expiry
+- native System-Link discovery page
+
+This is local/LAN System-Link discovery. An external LiNK relay/tunnel service is deliberately not bundled into SeriesDash360.
+
+## Full metadata editor
+
+Native metadata overrides can be edited for each title:
+
+- display title
+- category
+- developer/publisher
+- genre
+- release year
+- description
+
+## Background cover queue
+
+- asynchronous worker thread
+- missing-cover queue on startup
+- manual queue from the library
+- duplicate queue suppression
+- background XboxUnity cover refresh without blocking navigation
 
 ## Portable/desktop feature layer
 
@@ -226,21 +326,22 @@ The browser preview is a development UI and is **not** the Xbox 360 executable.
 | Desktop favorites | ✅ Implemented |
 | Desktop recently played | ✅ Implemented |
 | Portable plugin registry/policy | ✅ Implemented |
-| Native search UI | 🚧 Not complete |
-| Native favorites persistence | 🚧 Not complete |
-| Native recently-played persistence | 🚧 Not complete |
-| Native category/filter UI | 🚧 Not complete |
-| Full native file-manager UI | 🚧 Not complete |
-| Themes / skin engine | 🚧 Not complete |
-| Title Update manager | 🚧 Not complete |
-| Achievement browser | 🚧 Not complete |
-| Save-game browser | 🚧 Not complete |
-| Screenshot capture | 🚧 Not complete |
-| Native plugin loader | 🚧 Not complete |
-| Native script runtime | 🚧 Not complete |
-| LiNK/System-Link integration | 🚧 Not implemented |
-| Full metadata editor | 🚧 Not complete |
-| Background cover queue | 🚧 Not complete |
+| Native search UI | ✅ Implemented with XShowKeyboardUI |
+| Native favorites persistence | ✅ Implemented in state.ini |
+| Native recently-played persistence | ✅ Implemented and sortable |
+| Native category/filter UI | ✅ All / Games / Homebrew / Emulators / Apps / Favorites / Recent |
+| Full native file-manager UI | ✅ Browse / copy / move / delete / mkdir |
+| Themes / skin engine | ✅ Built-ins + .theme files + background image |
+| Title Update manager | ✅ Local installed-update scan + enable/disable |
+| Achievement browser | ✅ Read-only XUser achievement enumeration |
+| Save-game browser | ✅ Read-only profile/title save discovery |
+| Screenshot capture | ✅ PNG capture to HDD |
+| Native plugin loader | ✅ .xex plugin discovery + XexLoadImage |
+| Native script runtime | ✅ .sd360 command scripts |
+| System-Link integration | ✅ LAN peer/title discovery |
+| External LiNK relay/tunneling | ➖ Not bundled |
+| Full metadata editor | ✅ Title/category/developer/genre/year/description |
+| Background cover queue | ✅ Worker-thread download queue |
 | Hardware-tested `default.xex` | ❌ Not yet verified |
 
 ---
