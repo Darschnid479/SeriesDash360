@@ -23,6 +23,25 @@ static ULONGLONG nowTicks(){
  return ((ULONGLONG)ft.dwHighDateTime<<32)|ft.dwLowDateTime;
 }
 
+static std::vector<std::string> split(const std::string& s,char delim){
+ std::vector<std::string> out;
+ size_t start=0;
+ for(;;){
+  size_t p=s.find(delim,start);
+  if(p==std::string::npos){out.push_back(s.substr(start));break;}
+  out.push_back(s.substr(start,p-start));
+  start=p+1;
+ }
+ return out;
+}
+
+static std::string cleanField(std::string s){
+ for(size_t i=0;i<s.size();++i){
+  if(s[i]=='|'||s[i]=='\r'||s[i]=='\n')s[i]=' ';
+ }
+ return s;
+}
+
 StateStore::StateStore():
  themeName_("series-dark"),
  path_("Hdd1:\\SeriesDash360\\userdata\\state.ini"){
@@ -34,7 +53,7 @@ void StateStore::load(){
  ensureDirs();
  FILE* f=fopen(path_.c_str(),"rb");
  if(!f)return;
- char line[1024];
+ char line[4096];
  while(fgets(line,sizeof(line),f)){
   char* e=strpbrk(line,"\r\n");
   if(e)*e=0;
@@ -42,19 +61,20 @@ void StateStore::load(){
    setTheme(line+6);
    continue;
   }
-  unsigned id=0,fav=0;
-  unsigned long long last=0;
-  char cat[64]={0};
-  char title[512]={0};
-  int fields=sscanf(line,"%8x|%u|%llu|%63[^|]|%511[^\n]",&id,&fav,&last,cat,title);
-  if(fields>=4){
-   TitleState s;
-   s.favorite=fav!=0;
-   s.lastPlayed=(ULONGLONG)last;
-   s.category=cat;
-   if(fields>=5)s.customTitle=title;
-   states_[(DWORD)id]=s;
-  }
+  std::vector<std::string> p=split(line,'|');
+  if(p.size()<4)continue;
+  DWORD id=(DWORD)strtoul(p[0].c_str(),0,16);
+  TitleState s;
+  s.favorite=atoi(p[1].c_str())!=0;
+  s.lastPlayed=(ULONGLONG)_strtoui64(p[2].c_str(),0,10);
+  s.category=p[3];
+  if(p.size()>4)s.customTitle=p[4];
+  if(p.size()>5)s.developer=p[5];
+  if(p.size()>6)s.genre=p[6];
+  if(p.size()>7)s.year=p[7];
+  if(p.size()>8)s.description=p[8];
+  if(p.size()>9)s.coverOverride=p[9];
+  states_[id]=s;
  }
  fclose(f);
 }
@@ -65,12 +85,18 @@ void StateStore::save() const {
  if(!f)return;
  fprintf(f,"theme=%s\r\n",themeName_.c_str());
  for(std::map<DWORD,TitleState>::const_iterator it=states_.begin();it!=states_.end();++it){
-  fprintf(f,"%08X|%u|%llu|%s|%s\r\n",
+  const TitleState& s=it->second;
+  fprintf(f,"%08X|%u|%llu|%s|%s|%s|%s|%s|%s|%s\r\n",
    (unsigned)it->first,
-   it->second.favorite?1:0,
-   (unsigned long long)it->second.lastPlayed,
-   it->second.category.c_str(),
-   it->second.customTitle.c_str());
+   s.favorite?1:0,
+   (unsigned long long)s.lastPlayed,
+   cleanField(s.category).c_str(),
+   cleanField(s.customTitle).c_str(),
+   cleanField(s.developer).c_str(),
+   cleanField(s.genre).c_str(),
+   cleanField(s.year).c_str(),
+   cleanField(s.description).c_str(),
+   cleanField(s.coverOverride).c_str());
  }
  fclose(f);
 }
@@ -81,25 +107,15 @@ TitleState StateStore::state(DWORD id) const {
  return it->second;
 }
 
-void StateStore::toggleFavorite(DWORD id){
- states_[id].favorite=!states_[id].favorite;
- save();
-}
-
-void StateStore::recordPlayed(DWORD id){
- states_[id].lastPlayed=nowTicks();
- save();
-}
-
-void StateStore::setCategory(DWORD id,const std::string& c){
- states_[id].category=c;
- save();
-}
-
-void StateStore::setCustomTitle(DWORD id,const std::string& t){
- states_[id].customTitle=t;
- save();
-}
+void StateStore::toggleFavorite(DWORD id){states_[id].favorite=!states_[id].favorite;save();}
+void StateStore::recordPlayed(DWORD id){states_[id].lastPlayed=nowTicks();save();}
+void StateStore::setCategory(DWORD id,const std::string& c){states_[id].category=c;save();}
+void StateStore::setCustomTitle(DWORD id,const std::string& t){states_[id].customTitle=t;save();}
+void StateStore::setDeveloper(DWORD id,const std::string& v){states_[id].developer=v;save();}
+void StateStore::setGenre(DWORD id,const std::string& v){states_[id].genre=v;save();}
+void StateStore::setYear(DWORD id,const std::string& v){states_[id].year=v;save();}
+void StateStore::setDescription(DWORD id,const std::string& v){states_[id].description=v;save();}
+void StateStore::setCoverOverride(DWORD id,const std::string& v){states_[id].coverOverride=v;save();}
 
 void StateStore::apply(std::vector<TitleEntry>& titles) const {
  for(size_t i=0;i<titles.size();++i){
@@ -108,6 +124,7 @@ void StateStore::apply(std::vector<TitleEntry>& titles) const {
   titles[i].lastPlayed=s.lastPlayed;
   titles[i].category=s.category;
   if(!s.customTitle.empty())titles[i].title=s.customTitle;
+  if(!s.coverOverride.empty())titles[i].cover=s.coverOverride;
  }
 }
 
