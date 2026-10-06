@@ -20,6 +20,11 @@ struct TitleState {
  ULONGLONG lastPlayed;
  std::string category;
  std::string customTitle;
+ std::string developer;
+ std::string genre;
+ std::string year;
+ std::string description;
+ std::string coverOverride;
  TitleState():favorite(false),lastPlayed(0),category("Games"){}
 };
 
@@ -42,6 +47,11 @@ public:
  void recordPlayed(DWORD titleId);
  void setCategory(DWORD titleId,const std::string& category);
  void setCustomTitle(DWORD titleId,const std::string& title);
+ void setDeveloper(DWORD titleId,const std::string& value);
+ void setGenre(DWORD titleId,const std::string& value);
+ void setYear(DWORD titleId,const std::string& value);
+ void setDescription(DWORD titleId,const std::string& value);
+ void setCoverOverride(DWORD titleId,const std::string& value);
  void apply(std::vector<TitleEntry>& titles) const;
  std::vector<size_t> filter(const std::vector<TitleEntry>& titles,const std::string& query,LibraryFilter filter) const;
  const Theme& theme() const { return theme_; }
