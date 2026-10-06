@@ -238,6 +238,24 @@ These images reflect the current native 1.0 source layout. They are **reference 
 
 ---
 
+# SDK-free XEX2 packer
+
+SeriesDash360 now includes **SeriesDashXEX**, a clean-room XEX2 packer written for this repository. It does not use the Microsoft XDK or `imagexex.exe`.
+
+```bat
+BUILD_XBOX360_NO_SDK.bat path\to\SeriesDash360.exe
+```
+
+The input must be an Xbox 360 PowerPC big-endian PE (`Machine 0x01F2`, subsystem `0x000E`). SeriesDashXEX maps the PE, converts imports/IAT entries, builds XEX2 page descriptors and SHA-1 chains, creates the security/header structures, and writes an unsigned homebrew `default.xex`.
+
+**Important:** this replaces the proprietary XEX packaging step only. The complete SeriesDash360 runtime still needs to be compiled/linked into an Xbox-compatible PE first. OpenXeChain/FreeChainXenon are the open toolchain direction for that work; the current native runtime still uses APIs that are not all available in the open compatibility libraries yet.
+
+The output is intended for an already patched/homebrew-capable host and does not implement retail signing or DRM/security bypass.
+
+See `tools/SeriesDashXEX/README.md`.
+
+---
+
 # Building the Xbox 360 XEX
 
 The repository contains an XDK CMake build pipeline derived from the MIT-licensed XexForge approach.
