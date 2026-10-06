@@ -1,0 +1,51 @@
+name: LibXenon build
+
+on:
+  push:
+    branches:
+      - release/1.0
+    paths:
+      - "platform/libxenon/**"
+      - "BUILD_XBOX360_LIBXENON_DOCKER.bat"
+      - ".github/workflows/libxenon.yml"
+  pull_request:
+    paths:
+      - "platform/libxenon/**"
+      - "BUILD_XBOX360_LIBXENON_DOCKER.bat"
+      - ".github/workflows/libxenon.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pull prebuilt LibXenon image
+        run: docker pull free60/libxenon:latest
+
+      - name: Build SeriesDash360 LibXenon target
+        run: |
+          docker run --rm \
+            -v "$PWD:/app" \
+            -w /app/platform/libxenon \
+            free60/libxenon:latest \
+            bash -lc 'make clean && make -j$(nproc)'
+
+      - name: Verify ELF32 output
+        run: |
+          test -s platform/libxenon/SeriesDash360.elf32
+          file platform/libxenon/SeriesDash360.elf32
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p build-libxenon
+          cp platform/libxenon/SeriesDash360.elf32 build-libxenon/SeriesDash360.elf32
+          cp platform/libxenon/SeriesDash360.elf32 build-libxenon/xenon.elf
+
+      - name: Upload LibXenon build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SeriesDash360-LibXenon
+          path: build-libxenon/

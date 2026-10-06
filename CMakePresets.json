@@ -1,0 +1,5 @@
+{
+ "version":3,
+ "configurePresets":[{"name":"xbox360-xdk","generator":"Ninja","binaryDir":"${sourceDir}/build-xbox360","toolchainFile":"${sourceDir}/cmake/XdkXenon.toolchain.cmake"}],
+ "buildPresets":[{"name":"xbox360-xdk","configurePreset":"xbox360-xdk"}]
+}

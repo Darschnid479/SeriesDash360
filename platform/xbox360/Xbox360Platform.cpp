@@ -1,45 +1,33 @@
-// SeriesDash360 Xbox 360 platform adapter skeleton.
-//
-// This file intentionally contains NO exploit, signature bypass, DRM bypass,
-// hypervisor patching or kernel patching code. It is designed to be wired to
-// a console that is already running an authorized homebrew environment such
-// as the user's existing BadUpdate + FreeMyXe/XeUnshackle setup.
-//
-// Implement these callbacks with the public/homebrew APIs provided by the
-// environment you choose to build against.
-
-#include "sd360/Platform.hpp"
-
+#include "Xbox360Platform.hpp"
+#ifdef _XBOX
+#include <xtl.h>
+#endif
 namespace sd360 {
-
-class Xbox360Platform final : public IPlatform {
-public:
-    std::string platformName() const override { return "Xbox 360 (BadUpdate host)"; }
-
-    std::vector<std::filesystem::path> storageRoots() const override {
-        return {
-            "Usb0:/Games",
-            "Usb0:/Homebrew",
-            "Hdd1:/Games",
-            "Hdd1:/Content"
-        };
-    }
-
-    SystemStats systemStats() const override {
-        // TODO: bind to the environment's temperature/storage/network APIs.
-        return {};
-    }
-
-    bool launchTitle(const std::filesystem::path& executable, std::string& error) override {
-        (void)executable;
-        error = "Xbox launch adapter not bound yet. Connect this method to the existing homebrew launcher API.";
-        return false;
-    }
-
-    bool rebootToSystemDashboard(std::string& error) override {
-        error = "System-dashboard reboot adapter not bound yet.";
-        return false;
-    }
-};
-
-} // namespace sd360
+std::string Xbox360Platform::platformName() const { return "Xbox 360"; }
+std::vector<std::filesystem::path> Xbox360Platform::storageRoots() const {
+ return {"Hdd1:/Games","Hdd1:/Content","Usb0:/Games","Usb0:/Content","Usb1:/Games"};
+}
+SystemStats Xbox360Platform::systemStats() const {
+ SystemStats s;
+#ifdef _XBOX
+ BYTE cmd[16]={0x07}, out[16]={0};
+ HalSendSMCMessage(cmd,out);
+ s.cpuTempC=static_cast<float>(out[1]); s.gpuTempC=static_cast<float>(out[2]);
+#endif
+ return s;
+}
+bool Xbox360Platform::launchTitle(const std::filesystem::path& p,std::string& error) {
+#ifdef _XBOX
+ const std::string x=p.string(); XLaunchNewImage(x.c_str(),0); error="XLaunchNewImage returned unexpectedly"; return false;
+#else
+ (void)p; error="Xbox 360 launch backend is only available in an Xbox build"; return false;
+#endif
+}
+bool Xbox360Platform::rebootToSystemDashboard(std::string& error) {
+#ifdef _XBOX
+ XLaunchNewImage(XLAUNCH_KEYWORD_DEFAULT_APP,0); error="Dashboard launch returned unexpectedly"; return false;
+#else
+ error="Xbox 360 launch backend is only available in an Xbox build"; return false;
+#endif
+}
+}

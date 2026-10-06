@@ -1,0 +1,8 @@
+file(READ "${XEX}" _magic LIMIT 4 HEX)
+if(NOT _magic STREQUAL "58455832")
+ message(FATAL_ERROR "Not a XEX2: ${XEX}")
+endif()
+execute_process(COMMAND "${XDK_IMAGEXEX}" /DUMP "${XEX}" OUTPUT_VARIABLE _d ERROR_VARIABLE _e RESULT_VARIABLE _rc)
+if(NOT _rc EQUAL 0) message(FATAL_ERROR "imagexex /DUMP failed: ${_e}") endif()
+if(NOT _d MATCHES "title module") message(FATAL_ERROR "Expected title module") endif()
+message(STATUS "verify-xex: OK")

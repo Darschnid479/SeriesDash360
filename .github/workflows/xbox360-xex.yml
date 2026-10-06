@@ -1,0 +1,20 @@
+name: Xbox 360 XEX
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [release/1.0]
+
+jobs:
+  xex:
+    runs-on: [self-hosted, windows, xbox360-xdk]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and verify default.xex
+        shell: cmd
+        run: BUILD_XBOX360.bat
+      - name: Upload verified XEX
+        uses: actions/upload-artifact@v4
+        with:
+          name: SeriesDash360-1.0-XEX
+          path: build-xbox360/default.xex
