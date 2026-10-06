@@ -154,7 +154,41 @@ std::vector<size_t> StateStore::filter(const std::vector<TitleEntry>& titles,con
  return out;
 }
 
+static DWORD parseColor(const std::string& s,DWORD fallback){
+ if(s.empty())return fallback;
+ const char* p=s.c_str();
+ if(!strncmp(p,"0x",2)||!strncmp(p,"0X",2))p+=2;
+ unsigned long v=strtoul(p,0,16);
+ if(strlen(p)<=6)v|=0xFF000000;
+ return (DWORD)v;
+}
+
+bool StateStore::loadThemeFile(const std::string& path){
+ FILE* f=fopen(path.c_str(),"rb");
+ if(!f)return false;
+ Theme t;
+ char line[1024];
+ while(fgets(line,sizeof(line),f)){
+  char* e=strpbrk(line,"\r\n");if(e)*e=0;
+  char* eq=strchr(line,'=');if(!eq)continue;*eq=0;
+  std::string k=line,v=eq+1;
+  if(k=="background")t.background=parseColor(v,t.background);
+  else if(k=="panel")t.panel=parseColor(v,t.panel);
+  else if(k=="accent")t.accent=parseColor(v,t.accent);
+  else if(k=="text")t.text=parseColor(v,t.text);
+  else if(k=="muted")t.muted=parseColor(v,t.muted);
+  else if(k=="background_image")t.backgroundImage=v;
+ }
+ fclose(f);
+ theme_=t;
+ themeName_=std::string("file:")+path;
+ return true;
+}
+
 void StateStore::setTheme(const std::string& n){
+ if(n.size()>5&&n.substr(0,5)=="file:"){
+  if(loadThemeFile(n.substr(5)))return;
+ }
  themeName_=n;
  theme_=Theme();
  if(n=="xbox-green"){
