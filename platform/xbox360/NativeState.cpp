@@ -148,6 +148,8 @@ std::vector<size_t> StateStore::filter(const std::vector<TitleEntry>& titles,con
   if(f==FILTER_RECENT&&s.lastPlayed==0)continue;
   if(f==FILTER_GAMES&&s.category!="Games")continue;
   if(f==FILTER_HOMEBREW&&s.category!="Homebrew")continue;
+  if(f==FILTER_EMULATORS&&s.category!="Emulators")continue;
+  if(f==FILTER_APPS&&s.category!="Apps")continue;
   out.push_back(i);
  }
  if(f==FILTER_RECENT)std::sort(out.begin(),out.end(),RecentSorter(titles,*this));
