@@ -1,36 +1,45 @@
 # SeriesDash360 1.0 release candidate
 
-This branch contains the native Xbox 360 1.0 runtime and the reproducible XEX build path.
+The native feature set requested for the 1.0 dashboard is now implemented in source on `release/1.0`.
 
-## Implemented in the native runtime
+## Implemented native features
 
-- Xbox 360 Direct3D9 1280x720 Series-style UI
-- XInput navigation and launch controls
-- recursive HDD/USB game scanning for `default.xex`
-- XEX execution-ID / Title ID parsing
-- launch through `XLaunchNewImage`
-- SMC CPU/GPU/eDRAM/board temperatures
-- mounted `Dvd:\` file-tree import to HDD
-- XboxUnity cover-art lookup + on-console JPEG cache
-- XHTTP networking
-- FTP control + passive data channel
-- FTP LIST/NLST/RETR/STOR/DELE/MKD/RMD/CWD/PWD
-- system page and library page
-- local cover fallback
-- desktop portable core retained for testing
+- Direct3D9 1280×720 Series-style dashboard
+- XInput navigation
+- HDD/USB library scanning and XEX launch
+- XEX Title ID parsing
+- native search keyboard
+- persistent favorites
+- persistent recently played
+- All/Games/Homebrew/Emulators/Apps/Favorites/Recent filters
+- controller-driven file manager
+- themes and external .theme skins
+- local Title Update manager
+- read-only achievement browser
+- read-only save-game browser
+- PNG screenshots
+- native .xex plugin loader
+- native .sd360 script runtime
+- LAN System-Link peer/title discovery
+- full local metadata editor
+- asynchronous background cover queue
+- XboxUnity/XHTTP cover lookup and cache
+- disc-to-HDD copy from mounted Dvd:\
+- CPU/GPU/eDRAM/board telemetry
+- FTP with passive upload/download and file operations
 
-## XEX build
+## LiNK note
 
-On a Windows machine with the Xbox 360 XDK installed:
+SeriesDash360 includes LAN/System-Link discovery. It does not bundle an external LiNK relay/tunneling provider or Xbox Live bypass.
 
-1. Set `XEDK` to the XDK root.
-2. Install CMake >= 3.21 and Ninja.
-3. Run `BUILD_XBOX360.bat`.
-4. The build must finish with the XEX2/title-module verifier passing.
-5. Output: `build-xbox360/default.xex`.
+## Final binary gate
 
-A binary must not be published as a 1.0 release until this exact build has passed and the XEX has been smoke-tested on hardware.
+The remaining blocker is **verification, not feature source**:
 
-## Current verification limitation
+1. Build with the Xbox 360 XDK using `BUILD_XBOX360.bat`.
+2. Pass the included XEX2/title-module verifier.
+3. Produce `build-xbox360/default.xex`.
+4. Smoke-test the XEX on an Xbox 360 running the compatible homebrew host.
+5. Fix any hardware/XDK-only compile or runtime issues discovered there.
 
-The ChatGPT build container used to author this branch does not contain the proprietary Xbox 360 XDK or `imagexex.exe`. Therefore the source and build pipeline are present, but no claim is made that a hardware-tested `default.xex` was produced in this environment.
+The current authoring environment does not contain the proprietary XDK or `imagexex.exe`, so no hardware-tested XEX is claimed yet.
