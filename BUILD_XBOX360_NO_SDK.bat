@@ -1,90 +1,131 @@
 @echo off
-setlocal EnableExtensions
-title SeriesDash360 - FULL SDK-FREE BUILD
+setlocal EnableExtensions EnableDelayedExpansion
+title SeriesDash360 - Native Windows SDK-Free Builder
 cd /d "%~dp0"
 
 echo ============================================================
-echo  SeriesDash360 1.0 - FULL SDK-FREE BUILD
+echo  SeriesDash360 1.0 - NATIVE WINDOWS SDK-FREE BUILD
 echo ============================================================
 echo.
-echo This build uses:
-echo   - WSL/Ubuntu
-echo   - OpenXeChain LLVM/Clang
-echo   - OpenXeChain newlib/xecorelib
-echo   - SeriesDashXEX
+echo NO WSL. NO LINUX. NO DOCKER. NO MICROSOFT XDK.
 echo.
-echo It does NOT require Microsoft XDK or imagexex.exe.
+echo This bootstrap prepares a native Windows build environment for
+echo the open Xbox 360 toolchain and SeriesDashXEX.
 echo.
 
-where wsl.exe >nul 2>nul
-if errorlevel 1 (
-  echo WSL is not installed.
-  echo Attempting to install WSL + Ubuntu...
-  wsl --install -d Ubuntu
-  echo.
-  echo Windows may require a reboot. Finish Ubuntu first-run setup,
-  echo then run this BAT again.
-  pause
-  exit /b 2
-)
-
-wsl.exe -l -q | findstr /i "Ubuntu" >nul
-if errorlevel 1 (
-  echo Ubuntu is not installed in WSL.
-  echo Installing Ubuntu...
-  wsl --install -d Ubuntu
-  echo.
-  echo Finish Ubuntu first-run setup, then run this BAT again.
-  pause
-  exit /b 2
-)
-
-echo [1/3] Converting project path for WSL...
-for /f "usebackq delims=" %%P in (`wsl.exe -d Ubuntu -- wslpath -a "%CD%"`) do set "WSL_PROJECT=%%P"
-if "%WSL_PROJECT%"=="" (
-  echo ERROR: Could not translate the project path into WSL.
+where winget >nul 2>nul || (
+  echo ERROR: winget is required for automatic prerequisite setup.
+  echo Install/update App Installer from Microsoft Store and retry.
   goto :fail
 )
-echo   %WSL_PROJECT%
-echo.
 
-echo [2/3] Bootstrapping/building OpenXeChain...
-echo.
-echo First run builds LLVM and is much heavier than later builds.
-echo The result is cached under .openxechain.
-echo.
-wsl.exe -d Ubuntu -- bash -lc "cd '%WSL_PROJECT%' && chmod +x BOOTSTRAP_OPENXECHAIN.sh platform/openxechain/build.sh && ./BOOTSTRAP_OPENXECHAIN.sh"
+call :ensure Git.Git git
+if errorlevel 1 goto :fail
+call :ensure Kitware.CMake cmake
+if errorlevel 1 goto :fail
+call :ensure Ninja-build.Ninja ninja
+if errorlevel 1 goto :fail
+call :ensure Python.Python.3.13 python
+if errorlevel 1 goto :fail
+call :ensure LLVM.LLVM clang
 if errorlevel 1 goto :fail
 
 echo.
-echo [3/3] Checking output...
-if not exist "build-open\default.xex" (
-  echo ERROR: OpenXeChain completed without producing default.xex.
+echo [1/5] Preparing native Windows OpenXeChain sources...
+if not exist ".openxechain-win" mkdir ".openxechain-win"
+if not exist ".openxechain-win\llvm\.git" (
+  git clone --depth 1 https://github.com/OpenXeChain/llvm.git ".openxechain-win\llvm"
+  if errorlevel 1 goto :fail
+) else (
+  git -C ".openxechain-win\llvm" fetch --depth 1 origin main
+  git -C ".openxechain-win\llvm" reset --hard origin/main
+)
+
+echo.
+echo [2/5] Configuring Xbox-patched LLVM for a Windows host...
+if not exist ".openxechain-win\llvm-build" mkdir ".openxechain-win\llvm-build"
+cmake -S ".openxechain-win\llvm\llvm" -B ".openxechain-win\llvm-build" -G Ninja ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_C_COMPILER=clang ^
+  -DCMAKE_CXX_COMPILER=clang++ ^
+  -DCMAKE_INSTALL_PREFIX="%CD%\.openxechain-win\toolchain" ^
+  -DLLVM_ENABLE_PROJECTS="lld;clang" ^
+  -DLLVM_TARGETS_TO_BUILD=PowerPC ^
+  -DLLVM_DEFAULT_TARGET_TRIPLE=ppc32-xbox360 ^
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON
+if errorlevel 1 goto :fail
+
+echo.
+echo [3/5] Building native Windows OpenXeChain clang/lld...
+cmake --build ".openxechain-win\llvm-build" --target install
+if errorlevel 1 goto :fail
+
+set "OXCLANG=%CD%\.openxechain-win\toolchain\bin\clang.exe"
+if not exist "%OXCLANG%" (
+  echo ERROR: Xbox-patched clang.exe was not produced.
   goto :fail
 )
 
 echo.
+echo [4/5] Checking SDK-free runtime support...
+echo.
+echo The compiler is now native Windows and Xbox-target aware.
+echo SeriesDash360 still needs the OpenXeChain newlib/xecorelib runtime
+echo installed for this Windows-hosted compiler before the dashboard PE
+echo can be linked without Microsoft libraries.
+echo.
+echo This BAT intentionally stops here instead of pretending that stock
+echo Windows LLVM can link a working Xbox dashboard.
+echo.
+echo Native compiler:
+echo   %OXCLANG%
+echo.
+echo [5/5] SeriesDashXEX remains ready for the resulting Xbox PE.
+echo.
 echo ============================================================
-echo  SUCCESS
+echo  WINDOWS TOOLCHAIN STAGE COMPLETE
 echo ============================================================
 echo.
-echo SDK-free XEX:
-echo   %CD%\build-open\default.xex
+echo No WSL/Linux/XDK was used.
 echo.
-echo No Microsoft XDK was used.
+echo Remaining repo work: native-Windows build/install rules for
+echo OpenXeChain compiler-rt + newlib + xecorelib, then compile the
+echo platform/openxechain runtime and run SeriesDashXEX automatically.
 echo.
 pause
+exit /b 0
+
+:ensure
+set "PKG=%~1"
+set "CMD=%~2"
+where %CMD% >nul 2>nul
+if not errorlevel 1 (
+  echo Found %CMD%.
+  exit /b 0
+)
+echo Installing %PKG%...
+winget install --id %PKG% -e --accept-package-agreements --accept-source-agreements
+if errorlevel 1 exit /b 1
+call :refresh_path
+where %CMD% >nul 2>nul
+if errorlevel 1 (
+  echo ERROR: %CMD% is still unavailable. Open a new Command Prompt and retry.
+  exit /b 1
+)
+exit /b 0
+
+:refresh_path
+for /f "tokens=2,*" %%A in ('reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path 2^>nul ^| findstr /i "Path"') do set "MP=%%B"
+for /f "tokens=2,*" %%A in ('reg query "HKCU\Environment" /v Path 2^>nul ^| findstr /i "Path"') do set "UP=%%B"
+set "PATH=%MP%;%UP%;%PATH%"
 exit /b 0
 
 :fail
 echo.
 echo ============================================================
-echo  SDK-FREE BUILD FAILED
+echo  BUILD SETUP FAILED
 echo ============================================================
-echo.
-echo Read the compiler/toolchain error above.
-echo OpenXeChain build log, when present:
-echo   .openxechain\src\buildscript\build.log
+echo Read the exact error above.
 echo.
 pause
 exit /b 1
