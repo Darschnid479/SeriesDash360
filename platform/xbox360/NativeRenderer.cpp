@@ -2,7 +2,7 @@
 namespace sd360x {
 struct V { float x,y,z,rhw; DWORD c; float u,v; };
 #define SD_FVF (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-NativeRenderer::NativeRenderer():d3d_(0),dev_(0),font_(0){}
+NativeRenderer::NativeRenderer():d3d_(0),dev_(0),font_(0),background_(0xFF090B0D){}
 NativeRenderer::~NativeRenderer(){if(font_)font_->Release();if(dev_)dev_->Release();if(d3d_)d3d_->Release();}
 bool NativeRenderer::init(){
  d3d_=Direct3DCreate9(D3D_SDK_VERSION);if(!d3d_)return false;
@@ -11,7 +11,7 @@ bool NativeRenderer::init(){
  D3DXCreateFontA(dev_,22,0,FW_NORMAL,1,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,ANTIALIASED_QUALITY,DEFAULT_PITCH,"Arial",&font_);
  return true;
 }
-void NativeRenderer::begin(){dev_->Clear(0,0,D3DCLEAR_TARGET,0xFF090B0D,1.0f,0);dev_->BeginScene();}
+void NativeRenderer::begin(){dev_->Clear(0,0,D3DCLEAR_TARGET,background_,1.0f,0);dev_->BeginScene();}
 void NativeRenderer::end(){dev_->EndScene();dev_->Present(0,0,0,0);}
 void NativeRenderer::textured(float x,float y,float w,float h,IDirect3DTexture9* t,DWORD c){
  V v[4]={{x-.5f,y-.5f,0,1,c,0,0},{x+w-.5f,y-.5f,0,1,c,1,0},{x-.5f,y+h-.5f,0,1,c,0,1},{x+w-.5f,y+h-.5f,0,1,c,1,1}};
