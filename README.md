@@ -208,157 +208,33 @@ This manager handles updates already present on storage. It is not a piracy-orie
 - read-only save-game discovery by profile and Title ID
 - save filename/path/size display
 
-## Screenshots
+## UI reference renders
 
-- native framebuffer/back-buffer capture
-- PNG output
-- stored in `Hdd1:\SeriesDash360\screenshots`
-- timestamped screenshot filenames
-- controller shortcut through right-stick click
+These images reflect the current native 1.0 source layout. They are **reference renders**, not yet HDMI captures from a hardware-tested `default.xex`.
 
-## Native plugins and scripts
+### Native library
 
-- scans `Hdd1:\SeriesDash360\plugins\*.xex`
-- loads selected plugin modules through `XexLoadImage`
-- scans `Hdd1:\SeriesDash360\scripts\*.sd360`
-- startup script execution
-- script commands for scan, theme, favorite, cover, launch, category and title overrides
+![SeriesDash360 1.0 library](assets/screenshots/home.svg)
 
-## System-Link LAN integration
+### Search + favorites
 
-- UDP LAN peer discovery on port `30720`
-- periodic dashboard beacons
-- peer IP/name tracking
-- active Title ID advertisement
-- stale-peer expiry
-- native System-Link discovery page
+![Native search and favorites](assets/screenshots/library.svg)
 
-This is local/LAN System-Link discovery. An external LiNK relay/tunnel service is deliberately not bundled into SeriesDash360.
+### Tools hub
 
-## Full metadata editor
+![SeriesDash360 tools](assets/screenshots/tools.svg)
 
-Native metadata overrides can be edited for each title:
+### Native file manager
 
-- display title
-- category
-- developer/publisher
-- genre
-- release year
-- description
+![Native file manager](assets/screenshots/file-manager.svg)
 
-## Background cover queue
+### Themes / skins
 
-- asynchronous worker thread
-- missing-cover queue on startup
-- manual queue from the library
-- duplicate queue suppression
-- background XboxUnity cover refresh without blocking navigation
+![Themes and skins](assets/screenshots/themes.svg)
 
-## Portable/desktop feature layer
+### System / telemetry
 
-SeriesDash360 also retains a C++17 portable development layer containing:
-
-- library model
-- search engine
-- favorites model
-- recently played model
-- categories
-- settings
-- file-manager core
-- cover-service abstraction
-- XEX metadata parser
-- disc-import abstraction
-- plugin command registry
-- script security policy
-- desktop development adapter
-
-## Interactive PC preview
-
-Run:
-
-```bat
-OPEN_PREVIEW.bat
-```
-
-The browser preview includes:
-
-- Series-style Home
-- My Games page
-- search
-- favorites
-- recent games
-- game/app/homebrew categories
-- System page
-- File Manager mock UI
-- Settings page
-- Series-style tiles and focus animations
-
-The browser preview is a development UI and is **not** the Xbox 360 executable.
-
----
-
-# Feature status
-
-| Feature | Native Xbox 360 status |
-|---|---|
-| Series-style dashboard renderer | ✅ Implemented |
-| 1280×720 Direct3D9 output | ✅ Implemented |
-| Xbox 360 controller/XInput | ✅ Implemented |
-| HDD game scanning | ✅ Implemented |
-| USB game scanning | ✅ Implemented |
-| `default.xex` discovery | ✅ Implemented |
-| XEX Title ID parsing | ✅ Implemented |
-| Launch XEX/homebrew | ✅ Implemented |
-| CPU temperature | ✅ Implemented |
-| GPU temperature | ✅ Implemented |
-| eDRAM temperature | ✅ Implemented |
-| Board/system temperature | ✅ Implemented |
-| Disc → HDD file copy | ✅ Implemented |
-| Cover-art cache | ✅ Implemented |
-| Cover download | ✅ Implemented |
-| XboxUnity lookup | ✅ Implemented |
-| XHTTP network client | ✅ Implemented |
-| FTP server | ✅ Implemented |
-| FTP upload/download | ✅ Implemented |
-| Passive FTP | ✅ Implemented |
-| Portable file-manager core | ✅ Implemented |
-| Desktop search | ✅ Implemented |
-| Desktop favorites | ✅ Implemented |
-| Desktop recently played | ✅ Implemented |
-| Portable plugin registry/policy | ✅ Implemented |
-| Native search UI | ✅ Implemented with XShowKeyboardUI |
-| Native favorites persistence | ✅ Implemented in state.ini |
-| Native recently-played persistence | ✅ Implemented and sortable |
-| Native category/filter UI | ✅ All / Games / Homebrew / Emulators / Apps / Favorites / Recent |
-| Full native file-manager UI | ✅ Browse / copy / move / delete / mkdir |
-| Themes / skin engine | ✅ Built-ins + .theme files + background image |
-| Title Update manager | ✅ Local installed-update scan + enable/disable |
-| Achievement browser | ✅ Read-only XUser achievement enumeration |
-| Save-game browser | ✅ Read-only profile/title save discovery |
-| Screenshot capture | ✅ PNG capture to HDD |
-| Native plugin loader | ✅ .xex plugin discovery + XexLoadImage |
-| Native script runtime | ✅ .sd360 command scripts |
-| System-Link integration | ✅ LAN peer/title discovery |
-| External LiNK relay/tunneling | ➖ Not bundled |
-| Full metadata editor | ✅ Title/category/developer/genre/year/description |
-| Background cover queue | ✅ Worker-thread download queue |
-| Hardware-tested `default.xex` | ❌ Not yet verified |
-
----
-
-# Screenshots
-
-### Home
-
-![Home dashboard](assets/screenshots/home.svg)
-
-### My Games
-
-![Game library](assets/screenshots/library.svg)
-
-### System
-
-![System dashboard](assets/screenshots/system.svg)
+![Native system dashboard](assets/screenshots/system.svg)
 
 ---
 
