@@ -34,6 +34,7 @@ struct Theme {
  DWORD accent;
  DWORD text;
  DWORD muted;
+ std::string backgroundImage;
  Theme():background(0xFF090B0D),panel(0xFF15181B),accent(0xFF107C10),text(0xFFFFFFFF),muted(0xFFB5BABE){}
 };
 
@@ -57,6 +58,7 @@ public:
  const Theme& theme() const { return theme_; }
  const std::string& themeName() const { return themeName_; }
  void setTheme(const std::string& name);
+ bool loadThemeFile(const std::string& path);
 private:
  std::map<DWORD,TitleState> states_;
  Theme theme_;
