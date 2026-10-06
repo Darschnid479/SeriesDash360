@@ -10,7 +10,16 @@ bool NativeRenderer::init(){
  if(FAILED(d3d_->CreateDevice(0,D3DDEVTYPE_HAL,0,D3DCREATE_HARDWARE_VERTEXPROCESSING,&pp,&dev_)))return false;
  D3DXCreateFontA(dev_,22,0,FW_NORMAL,1,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,ANTIALIASED_QUALITY,DEFAULT_PITCH,"Arial",&font_);
  return true;
+bool NativeRenderer::screenshot(const std::string& path){
+ if(!dev_)return false;
+ IDirect3DSurface9* surface=0;
+ if(FAILED(dev_->GetBackBuffer(0,0,D3DBACKBUFFER_TYPE_MONO,&surface))||!surface)return false;
+ HRESULT hr=D3DXSaveSurfaceToFileA(path.c_str(),D3DXIFF_PNG,surface,0,0);
+ surface->Release();
+ return SUCCEEDED(hr);
 }
+}
+
 void NativeRenderer::begin(){dev_->Clear(0,0,D3DCLEAR_TARGET,background_,1.0f,0);dev_->BeginScene();}
 void NativeRenderer::end(){dev_->EndScene();dev_->Present(0,0,0,0);}
 void NativeRenderer::textured(float x,float y,float w,float h,IDirect3DTexture9* t,DWORD c){
