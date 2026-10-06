@@ -37,13 +37,10 @@ if errorlevel 1 (
   echo   WSL is installed but not initialized.
 )
 
-set "DISTRO="
-for /f "usebackq delims=" %%D in (`wsl.exe -l -q 2^>nul`) do (
-  echo %%D | findstr /i /x "Ubuntu" >nul && set "DISTRO=Ubuntu"
-)
-if not defined DISTRO (
+wsl.exe -d Ubuntu -u root -- bash -lc "exit 0" >nul 2>nul
+if errorlevel 1 (
   echo.
-  echo Ubuntu is not installed in WSL.
+  echo Ubuntu is not installed or initialized in WSL.
   echo Attempting automatic installation...
   wsl.exe --install -d Ubuntu
   if errorlevel 1 (
@@ -53,13 +50,14 @@ if not defined DISTRO (
     goto :fail
   )
   echo.
-  echo Ubuntu was requested. Windows may require a reboot before it
-  echo can be used. Re-run this BAT after the reboot.
+  echo Ubuntu was requested. Windows may require a reboot or one
+  echo initialization launch before it can be used.
+  echo Re-run this BAT after that step.
   echo.
   pause
   exit /b 10
 )
-echo   WSL Ubuntu found.
+echo   WSL Ubuntu found and runnable.
 echo.
 
 echo [2/6] Installing/updating open-source build dependencies...
