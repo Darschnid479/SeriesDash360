@@ -10,14 +10,22 @@ struct TitleEntry {
   DWORD titleId;
   std::string cover;
   bool favorite;
-  TitleEntry():titleId(0),favorite(false){}
+  ULONGLONG lastPlayed;
+  std::string category;
+  TitleEntry():titleId(0),favorite(false),lastPlayed(0),category("Games"){}
 };
-struct SystemInfo { int cpu,gpu,edram,mb; std::string ip; SystemInfo():cpu(0),gpu(0),edram(0),mb(0),ip("offline"){} };
+
+struct SystemInfo {
+  int cpu,gpu,edram,mb;
+  std::string ip;
+  SystemInfo():cpu(0),gpu(0),edram(0),mb(0),ip("offline"){}
+};
 
 class NativeRuntime {
 public:
   NativeRuntime();
   void scan();
+  std::vector<TitleEntry>& titles() { return titles_; }
   const std::vector<TitleEntry>& titles() const { return titles_; }
   bool launch(size_t index);
   SystemInfo systemInfo() const;
