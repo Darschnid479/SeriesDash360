@@ -18,7 +18,7 @@ void NativeRuntime::scanFolder(const std::string& folder,int depth){
  DWORD attr=GetFileAttributesA(xex.c_str());
  if(attr!=INVALID_FILE_ATTRIBUTES && !(attr&FILE_ATTRIBUTE_DIRECTORY)){
    TitleEntry e; e.xex=xex; size_t p=folder.find_last_of("\\/"); e.title=(p==std::string::npos)?folder:folder.substr(p+1);
-   e.titleId=readTitleId(xex.c_str());
+   e.titleId=readTitleId(xex.c_str()); if(folder.find("Homebrew")!=std::string::npos||folder.find("homebrew")!=std::string::npos)e.category="Homebrew";
    char id[16]; sprintf(id,"%08X",(unsigned)e.titleId); e.cover=std::string("Hdd1:\\SeriesDash360\\cache\\covers\\")+id+".jpg";
    titles_.push_back(e); return;
  }
