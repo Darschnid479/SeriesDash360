@@ -90,8 +90,19 @@ if errorlevel 1 call :die "Local MSYS2 package installation failed."
 
 if not exist "%CYGPATH%" call :die "cygpath.exe is missing after MSYS2 setup."
 
-for /f "usebackq delims=" %%P in (`"%CYGPATH%" -u "%ROOT%"`) do set "UNIXROOT=%%P"
+set "PATHFILE=%TOOLS%\seriesdash_unix_path.txt"
+if exist "%PATHFILE%" del /q "%PATHFILE%" >nul 2>nul
+
+"%CYGPATH%" -u "%ROOT%" > "%PATHFILE%" 2>>"%LOG%"
+if errorlevel 1 call :die "cygpath failed while translating the project path."
+
+set "UNIXROOT="
+set /p UNIXROOT=<"%PATHFILE%"
+del /q "%PATHFILE%" >nul 2>nul
+
 if not defined UNIXROOT call :die "Could not translate the project path for MSYS2."
+
+call :log "Translated project path: %UNIXROOT%"
 
 echo [7/8] Building OpenXeChain and SeriesDash360...
 echo         Detailed output is being written to ZERO_ADMIN_BUILD.log
