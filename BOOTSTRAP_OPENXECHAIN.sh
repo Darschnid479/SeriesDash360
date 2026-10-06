@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-WORK="$ROOT/.openxechain"
-SRC="$WORK/src"
-PREFIX="$WORK/sysroot"
+WORK="${OPENXECHAIN_WORK:-$ROOT/.openxechain}"
+SRC="${OPENXECHAIN_SOURCE:-$WORK/src}"
+PREFIX="${OPENXECHAIN_PREFIX:-$WORK/sysroot}"
 JOBS="${OPENXECHAIN_JOBS:-$(nproc)}"
 
 echo "============================================================"
@@ -12,6 +13,7 @@ echo "============================================================"
 echo
 echo "Source cache: $SRC"
 echo "Install root: $PREFIX"
+echo "Parallel jobs: $JOBS"
 echo
 
 sudo apt-get update
@@ -43,14 +45,16 @@ clone_or_update https://github.com/OpenXeChain/SynthXEX.git "$SRC/buildscript/sy
 
 if [[ ! -x "$PREFIX/bin/clang" ]]; then
   echo
-  echo "Building OpenXeChain. This is the large one-time LLVM build."
+  echo "Building OpenXeChain. This is the large ONE-TIME LLVM build."
   echo
   (
     cd "$SRC/buildscript"
     PREFIX="$PREFIX" PARALLEL="$JOBS" bash ./build-toolchain.sh
   )
 else
-  echo "Existing OpenXeChain installation found; skipping toolchain rebuild."
+  echo
+  echo "Existing OpenXeChain installation found."
+  echo "LLVM/toolchain rebuild skipped."
 fi
 
 echo
@@ -59,6 +63,6 @@ OPENXECHAIN_PREFIX="$PREFIX" bash "$ROOT/platform/openxechain/build.sh"
 
 echo
 echo "============================================================"
-echo " SDK-FREE BUILD COMPLETE"
+echo " SDK-FREE XEX BUILD COMPLETE"
 echo "============================================================"
 echo "$ROOT/build-open/default.xex"
