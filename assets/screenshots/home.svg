@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<rect width="1280" height="720" fill="#090b0d"/>
+<style>text{font-family:Segoe UI,Arial,sans-serif;fill:#f7f7f7}.muted{fill:#a7adb3}.brand{font-weight:800}.h1{font-size:54px;font-weight:800}.h2{font-size:24px;font-weight:700}.body{font-size:15px}.small{font-size:12px}.tile{fill:#15181b}.active{fill:#202428}.green{fill:#58d158}</style>
+<circle cx="38" cy="46" r="5" class="green"/><text x="52" y="53" font-size="20" class="brand">SERIESDASH360</text>
+<text x="218" y="53" class="body">Home</text><text x="290" y="53" class="muted body">My games</text><text x="382" y="53" class="muted body">Apps</text><text x="438" y="53" class="muted body">Files</text><text x="492" y="53" class="muted body">System</text><text x="563" y="53" class="muted body">Settings</text>
+<circle cx="1190" cy="46" r="17" fill="#107c10"/><text x="1184" y="52" font-size="15" font-weight="700">D</text><text x="1216" y="52" class="muted body">David</text>
+<defs><linearGradient id="hero" x1="0" x2="1"><stop offset="0" stop-color="#030706"/><stop offset="1" stop-color="#153524"/></linearGradient></defs>
+<rect x="34" y="76" width="810" height="265" rx="11" fill="url(#hero)"/>
+<text x="62" y="176" class="h1">Your 360.</text><text x="62" y="231" class="h1">Modernized.</text>
+<text x="62" y="265" class="muted body">A fast Series-inspired launcher for your local Xbox 360 and homebrew library.</text>
+<rect x="62" y="288" width="126" height="34" rx="6" fill="#fff"/><text x="76" y="310" fill="#111" font-size="14" font-weight="700">Browse library</text>
+<rect x="856" y="76" width="390" height="126" rx="11" class="tile"/><text x="876" y="104" class="muted small">Library</text><text x="876" y="144" class="h2">12 titles</text><text x="876" y="176" class="body">Ready to launch</text>
+<rect x="856" y="215" width="390" height="126" rx="11" class="tile"/><text x="876" y="243" class="muted small">Storage</text><text x="876" y="283" class="h2">63%</text><text x="876" y="315" class="body">USB0 · 298 GB free</text>
+<text x="34" y="385" class="h2">Jump back in</text>
+<rect x="34" y="406" width="188" height="118" rx="9" fill="#33402a"/><text x="48" y="500" font-size="15" font-weight="700">HALO 3</text><rect x="236" y="406" width="188" height="118" rx="9" fill="#451923"/><text x="250" y="500" font-size="15" font-weight="700">FORZA 4</text><rect x="438" y="406" width="188" height="118" rx="9" fill="#3e211b"/><text x="452" y="500" font-size="15" font-weight="700">GEARS 3</text><rect x="640" y="406" width="188" height="118" rx="9" fill="#28552d"/><text x="654" y="500" font-size="15" font-weight="700">MINECRAFT</text><rect x="842" y="406" width="188" height="118" rx="9" fill="#174664"/><text x="856" y="500" font-size="15" font-weight="700">SKATE 3</text><rect x="1044" y="406" width="188" height="118" rx="9" fill="#4c285d"/><text x="1058" y="500" font-size="15" font-weight="700">AURORA</text>
+<text x="34" y="565" class="h2">Quick actions</text>
+<rect x="34" y="582" width="289" height="84" rx="9" class="tile"/><text x="50" y="632" font-size="15" font-weight="700">File manager</text><rect x="337" y="582" width="289" height="84" rx="9" class="tile"/><text x="353" y="632" font-size="15" font-weight="700">Scan library</text><rect x="640" y="582" width="289" height="84" rx="9" class="tile"/><text x="656" y="632" font-size="15" font-weight="700">System monitor</text><rect x="943" y="582" width="289" height="84" rx="9" class="tile"/><text x="959" y="632" font-size="15" font-weight="700">Customize</text>
+<text x="34" y="697" class="muted small">Ⓐ Select     Ⓑ Back     Ⓨ Details     ☰ Settings</text></svg>
