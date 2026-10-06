@@ -47,7 +47,8 @@ static void ensureUserFolders(){
  CreateDirectoryA("Hdd1:\\SeriesDash360\\scripts",0);
  CreateDirectoryA("Hdd1:\\SeriesDash360\\cache",0);
  CreateDirectoryA("Hdd1:\\SeriesDash360\\cache\\covers",0);
- CreateDirectoryA("Hdd1:\\SeriesDash360\\userdata",0);\n CreateDirectoryA("Hdd1:\\SeriesDash360\\themes",0);
+ CreateDirectoryA("Hdd1:\\SeriesDash360\\userdata",0);
+ CreateDirectoryA("Hdd1:\\SeriesDash360\\themes",0);
 }
 
 static void scanThemeChoices(std::vector<std::string>& out){
@@ -147,8 +148,8 @@ int main(){
   "System"
  };
  const size_t toolCount=sizeof(tools)/sizeof(tools[0]);
- const char* themeNames[]={"series-dark","xbox-green","series-blue","oled"};
- const size_t themeCount=sizeof(themeNames)/sizeof(themeNames[0]);
+ std::vector<std::string> themeNames;
+ scanThemeChoices(themeNames);
  size_t themeSelected=0;
 
  while(running){
@@ -378,6 +379,7 @@ int main(){
   const Theme& theme=state.theme();
   ui.setBackground(theme.background);
   ui.begin();
+  if(!theme.backgroundImage.empty())ui.cover(0,0,1280,720,theme.backgroundImage,theme.background);
   ui.text(34,24,theme.text,"SERIESDASH360  1.0");
   ui.text(1010,24,theme.muted,"R3 Screenshot");
 
@@ -478,10 +480,13 @@ int main(){
   }
   else if(page==PAGE_THEMES){
    ui.text(34,78,theme.text,"Themes / Skins");
-   for(size_t i=0;i<themeCount;i++){
-    float x=34.0f+(float)i*290.0f;
-    ui.rect(x,140,270,140,i==themeSelected?theme.accent:theme.panel);
-    ui.text(x+18,190,theme.text,themeNames[i]);
+   for(size_t i=0;i<themeNames.size();i++){
+    size_t col=i%4;
+    size_t r=i/4;
+    float x=34.0f+(float)col*290.0f;
+    float y=140.0f+(float)r*170.0f;
+    ui.rect(x,y,270,140,i==themeSelected?theme.accent:theme.panel);
+    ui.text(x+18,y+50,theme.text,themeLabel(themeNames[i]));
    }
    ui.text(34,330,theme.muted,"D-pad Left/Right select   A Apply   B Back");
   }
