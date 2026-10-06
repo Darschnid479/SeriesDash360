@@ -34,6 +34,8 @@ static const char* filterName(LibraryFilter f){
  switch(f){
   case FILTER_GAMES:return "Games";
   case FILTER_HOMEBREW:return "Homebrew";
+  case FILTER_EMULATORS:return "Emulators";
+  case FILTER_APPS:return "Apps";
   case FILTER_FAVORITES:return "Favorites";
   case FILTER_RECENT:return "Recent";
   default:return "All";
@@ -186,7 +188,7 @@ int main(){
    }
 
    if(pressed(b,oldButtons,XINPUT_GAMEPAD_RIGHT_SHOULDER)){
-    filter=(LibraryFilter)(((int)filter+1)%5);
+    filter=(LibraryFilter)(((int)filter+1)%7);
     selected=0;
    }
 
