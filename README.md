@@ -243,12 +243,14 @@ These images reflect the current native 1.0 source layout. They are **reference 
 SeriesDash360 now includes **SeriesDashXEX**, a clean-room XEX2 packer written for this repository. It does not use the Microsoft XDK or `imagexex.exe`.
 
 ```bat
-BUILD_XBOX360_NO_SDK.bat path\to\SeriesDash360.exe
+BUILD_XBOX360_NO_SDK.bat
 ```
 
-The input must be an Xbox 360 PowerPC big-endian PE (`Machine 0x01F2`, subsystem `0x000E`). SeriesDashXEX maps the PE, converts imports/IAT entries, builds XEX2 page descriptors and SHA-1 chains, creates the security/header structures, and writes an unsigned homebrew `default.xex`.
+No prebuilt PE is required anymore. On Windows the builder uses WSL Ubuntu, installs the open build dependencies, clones/builds OpenXeChain on the first run, compiles the repository's SDK-free compatibility runtime to an Xbox 360 PowerPC PE, then runs SeriesDashXEX automatically to produce `build-xbox360-open\default.xex`.
 
-**Important:** this replaces the proprietary XEX packaging step only. The complete SeriesDash360 runtime still needs to be compiled/linked into an Xbox-compatible PE first. OpenXeChain/FreeChainXenon are the open toolchain direction for that work; the current native runtime still uses APIs that are not all available in the open compatibility libraries yet.
+You can still pass an existing Xbox PE as an optional argument to use pack-only mode.
+
+The OpenXeChain toolchain build is cached under WSL after the first successful run.
 
 The output is intended for an already patched/homebrew-capable host and does not implement retail signing or DRM/security bypass.
 
