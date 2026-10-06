@@ -2,6 +2,8 @@
 #include <xtl.h>
 #include <xhttp.h>
 #include <cstdio>
+#include <cstring>
+#include <cctype>
 
 namespace sd360x {
 bool networkStart(){XNetStartupParams xp;ZeroMemory(&xp,sizeof(xp));xp.cfgSizeOfStruct=sizeof(xp);if(XNetStartup(&xp)!=0)return false;WSADATA w;return WSAStartup(MAKEWORD(2,2),&w)==0;}
