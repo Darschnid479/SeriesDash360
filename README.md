@@ -2,7 +2,7 @@
 
 > A modern Xbox Series-inspired dashboard/front-end project for Xbox 360 homebrew environments.
 
-![SeriesDash360 home](assets/screenshots/home.png)
+![SeriesDash360 home](assets/screenshots/home.svg)
 
 SeriesDash360 is an **unofficial community project** that aims to bring a clean, fast, controller-first interface to Xbox 360 homebrew setups. The design takes inspiration from the current Xbox Series family while the feature roadmap focuses on the practical library-management ideas people expect from dashboards such as Aurora.
 
@@ -25,13 +25,13 @@ SeriesDash360 is an **unofficial community project** that aims to bring a clean,
 ## Screenshots
 
 ### Home
-![Home dashboard](assets/screenshots/home.png)
+![Home dashboard](assets/screenshots/home.svg)
 
 ### My games
-![Game library](assets/screenshots/library.png)
+![Game library](assets/screenshots/library.svg)
 
 ### System
-![System dashboard](assets/screenshots/system.png)
+![System dashboard](assets/screenshots/system.svg)
 
 ## Project status
 
