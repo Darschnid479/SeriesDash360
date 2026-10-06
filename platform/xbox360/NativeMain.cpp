@@ -47,7 +47,30 @@ static void ensureUserFolders(){
  CreateDirectoryA("Hdd1:\\SeriesDash360\\scripts",0);
  CreateDirectoryA("Hdd1:\\SeriesDash360\\cache",0);
  CreateDirectoryA("Hdd1:\\SeriesDash360\\cache\\covers",0);
- CreateDirectoryA("Hdd1:\\SeriesDash360\\userdata",0);
+ CreateDirectoryA("Hdd1:\\SeriesDash360\\userdata",0);\n CreateDirectoryA("Hdd1:\\SeriesDash360\\themes",0);
+}
+
+static void scanThemeChoices(std::vector<std::string>& out){
+ out.clear();
+ out.push_back("series-dark");
+ out.push_back("xbox-green");
+ out.push_back("series-blue");
+ out.push_back("oled");
+ WIN32_FIND_DATAA fd;
+ HANDLE h=FindFirstFileA("Hdd1:\\SeriesDash360\\themes\\*.theme",&fd);
+ if(h==INVALID_HANDLE_VALUE)return;
+ do{
+  out.push_back(std::string("file:Hdd1:\\SeriesDash360\\themes\\")+fd.cFileName);
+ }while(FindNextFileA(h,&fd));
+ FindClose(h);
+}
+
+static std::string themeLabel(const std::string& value){
+ if(value.size()>5&&value.substr(0,5)=="file:"){
+  size_t p=value.find_last_of("\\/");
+  return p==std::string::npos?value.substr(5):value.substr(p+1);
+ }
+ return value;
 }
 
 static DWORD currentTitleIndex(const std::vector<size_t>& visible,size_t selected){
@@ -216,7 +239,7 @@ int main(){
      page=PAGE_METADATA;
      row=0;
     }else if(row==5){
-     for(size_t i=0;i<themeCount;i++)if(state.themeName()==themeNames[i])themeSelected=i;
+     scanThemeChoices(themeNames); for(size_t i=0;i<themeNames.size();i++)if(state.themeName()==themeNames[i])themeSelected=i;
      page=PAGE_THEMES;
      row=0;
     }else if(row==6){
@@ -321,10 +344,10 @@ int main(){
    if(pressed(b,oldButtons,XINPUT_GAMEPAD_B)){page=PAGE_TOOLS;row=0;}
   }
   else if(page==PAGE_THEMES){
-   if(pressed(b,oldButtons,XINPUT_GAMEPAD_DPAD_RIGHT))themeSelected=(themeSelected+1)%themeCount;
-   if(pressed(b,oldButtons,XINPUT_GAMEPAD_DPAD_LEFT))themeSelected=(themeSelected+themeCount-1)%themeCount;
+   if(pressed(b,oldButtons,XINPUT_GAMEPAD_DPAD_RIGHT))if(!themeNames.empty())themeSelected=(themeSelected+1)%themeNames.size();
+   if(pressed(b,oldButtons,XINPUT_GAMEPAD_DPAD_LEFT))if(!themeNames.empty())themeSelected=(themeSelected+themeNames.size()-1)%themeNames.size();
    if(pressed(b,oldButtons,XINPUT_GAMEPAD_A)){
-    state.setTheme(themeNames[themeSelected]);
+    if(!themeNames.empty())state.setTheme(themeNames[themeSelected]);
     state.save();
     ui.setBackground(state.theme().background);
    }
